@@ -9,7 +9,7 @@ const userGet = async (req = request, res = response) => {
     const query = { google,  state } // Condición del query,
 
     const [ total, users ] = await Promise.all([
-        User.count(query),
+        User.countDocuments(query),
         User.find(query, 'name email role')
             .skip(Number(from)) // desde donde se muestran los resultados
             .limit(Number(limit)) // Limite 5
@@ -68,10 +68,24 @@ const userPut = async (req = request, res = response) => {
     });
 }
 
-const userDelete = (req = request, res = response) => {
-    res.json({
-        msg: 'delete API - controller'
-    })
+const userDelete = async (req = request, res = response) => {
+    const { id } = req.params;
+
+    const changeState = {
+        state: false
+    }
+
+    await User.findByIdAndUpdate(id, changeState, { new: true },  (err, userDb) => {
+        if (err) {
+            return res.status(400).json({
+                err
+            });
+        }
+
+        res.json({
+            userDb
+        });
+    });
 }
 
 const userPatch = (req = request, res = response) => {
