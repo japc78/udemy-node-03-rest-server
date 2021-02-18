@@ -3,13 +3,22 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 
-const userGet = (req = request, res = response) => {
-    const queryParams = request.query;
+const userGet = async (req = request, res = response) => {
+    const { limit = 5 , from = 0, state = true, google = false } = req.query;
+
+    const query = { google,  state } // Condición del query,
+
+    const [ total, users ] = await Promise.all([
+        User.count(query),
+        User.find(query, 'name email role')
+            .skip(Number(from)) // desde donde se muestran los resultados
+            .limit(Number(limit)) // Limite 5
+    ])
 
     res.json({
-        msg: 'get API - controller',
-        queryParams
-    })
+        total,
+        users
+    });
 }
 
 const userPost = async (req = request, res = response) => {
