@@ -17,12 +17,6 @@ const userPost = async (req = request, res = response) => {
     const { name, email, password, role } = req.body;
     const user = new User({name, email, password, role});
 
-    // TODO Verificar si el email existe
-    const emailExists = await User.findOne({ email });
-    if (emailExists) return res.status(400).json({
-        msg: 'This email is registered in the database'
-    });
-
     // Encriptar el password
     // Se crea un salt para aumentar la dificultad del password
     const salt = bcrypt.genSaltSync();
