@@ -9,6 +9,7 @@ const { validFields } = require('../middlewares/valid-fields');
 const router = Router();
 
 router.get('/', userGet);
+
 router.post('/', [
     check('email', 'The Email is not valid').isEmail(),
     check('name', 'The Name is required').not().isEmpty(),
@@ -17,6 +18,7 @@ router.post('/', [
     check('role').custom(isRoleValid),
     validFields
 ], userPost);
+
 router.put('/:id', userPut);
 router.delete('/', userDelete);
 router.patch('/', userPatch);

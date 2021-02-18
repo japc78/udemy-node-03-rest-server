@@ -30,14 +30,33 @@ const userPost = async (req = request, res = response) => {
     })
 }
 
-const userPut = (req = request, res = response) => {
+const userPut = async (req = request, res = response) => {
 
     const { id } = req.params;
 
+    const { password, google, email, ...restData } = req.body;
+
+    // TODO Validar en la BD
+    if (password) {
+        // Encriptar el password
+        // Se crea un salt para aumentar la dificultad del password
+        const salt = bcrypt.genSaltSync();
+        restData.password = bcrypt.hashSync(password, salt)
+    }
+
+    const user = await User.findByIdAndUpdate(id, restData, (err, userDb) => {
+        if (err) {
+            return res.status(400).json({
+                err
+            });
+        }
+
+        return userDb;
+    });
+
     res.json({
-        msg: 'put API - controller',
-        id
-    })
+        user
+    });
 }
 
 const userDelete = (req = request, res = response) => {
