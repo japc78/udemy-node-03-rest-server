@@ -1,7 +1,7 @@
 const { response, request } = require('express');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-const { validationResult } = require('express-validator');
+
 
 const userGet = (req = request, res = response) => {
     const queryParams = request.query;
@@ -23,17 +23,10 @@ const userPost = async (req = request, res = response) => {
         msg: 'This email is registered in the database'
     });
 
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(400).json(errors);
-    }
-
     // Encriptar el password
     // Se crea un salt para aumentar la dificultad del password
     const salt = bcrypt.genSaltSync();
     user.password = bcrypt.hashSync(password, salt)
-
 
     // Guardar usuario en BD
     await user.save();
