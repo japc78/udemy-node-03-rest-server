@@ -19,7 +19,12 @@ router.post('/', [
     validFields
 ], userPost);
 
-router.put('/:id', userPut);
+router.put('/:id', [
+    check('id', 'Not is valid Id').isMongoId(),
+    check('id').custom(userExists),
+    check('role').custom(isRoleValid),
+    validFields
+], userPut);
 
 router.delete('/:id',[
     check('id', 'Not is valid Id').isMongoId(),
