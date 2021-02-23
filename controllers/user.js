@@ -78,6 +78,8 @@ const userDelete = async (req = request, res = response) => {
         state: false
     }
 
+    // const authenticatedUser = req.user;
+
     await User.findByIdAndUpdate(id, changeState, { new: true },  (err, userDb) => {
         if (err) {
             return res.status(400).json({
@@ -87,6 +89,7 @@ const userDelete = async (req = request, res = response) => {
 
         res.json({
             userDb,
+            // authenticatedUser
             // uid
         });
     });
