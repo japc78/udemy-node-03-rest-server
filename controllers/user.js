@@ -71,6 +71,9 @@ const userPut = async (req = request, res = response) => {
 const userDelete = async (req = request, res = response) => {
     const { id } = req.params;
 
+    // A traves del request se recibe el uid del usuario que realiza la petición, que se obtiene del payload del token.
+    // const uid = req.uid;
+
     const changeState = {
         state: false
     }
@@ -83,7 +86,8 @@ const userDelete = async (req = request, res = response) => {
         }
 
         res.json({
-            userDb
+            userDb,
+            // uid
         });
     });
 }
