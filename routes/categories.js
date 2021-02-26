@@ -1,36 +1,50 @@
 const { Router, response } = require('express');
 const { check } = require('express-validator');
-const { addCategory } = require('../controllers/categories');
+const { addCategory, getCategories, getCategoryById, updateCategory, deleteCategory } = require('../controllers/categories');
 
-const { validJWT, validFields } = require('../middlewares');
+const { validJWT, validFields, shouldBeRole, isAdminRole } = require('../middlewares');
+
+const { categoryExitsById, categoryNameExits } = require('../helpers/db-validators');
 
 const router = Router();
 
-// TODO Obtener todas las categorías
-router.get('/', (req, res= response) => {
-    res.json({msg: 'Get categories'});
-});
+// Obtener todas las categorías
+router.get('/', getCategories);
 
-// TODO Obtener una categoría por Id
-router.get('/:id', (req, res= response) => {
-    res.json({msg: 'Get category by id'});
-});
+// Obtener una categoría por Id.
+router.get('/:id',[
+    check('id', 'Not is valid id').isMongoId(),
+    check('id').custom(categoryExitsById),
+    validFields
+], getCategoryById);
 
-// TODO Crear categoría, cualquier usuario con token valido.
+// Crear categoría, cualquier usuario con token valido.
 router.post('/',  [
     validJWT,
+    shouldBeRole('SALES_ROLE', 'ADMIN_ROLE'),
     check('name', 'The name is required').notEmpty(),
+    check('name').custom(categoryNameExits),
     validFields
  ], addCategory);
 
-// TODO Actualizar categoría por ID.
-router.put('/:id', (req, res= response) => {
-    res.json({msg: 'Put, Update category by id'});
-});
+// Actualizar categoría por ID.
+router.put('/:id', [
+    validJWT,
+    shouldBeRole('SALES_ROLE', 'ADMIN_ROLE'),
+    check('id', 'Not is valid id').isMongoId(),
+    check('id').custom(categoryExitsById),
+    check('name', 'The name is required').notEmpty(),
+    check('name').custom(categoryNameExits),
+    validFields
+], updateCategory);
 
-// TODO Eliminar/desactivar categoría.
-router.delete('/:id', (req, res= response) => {
-    res.json({msg: 'Delete, category by id'});
-});
+// Eliminar/desactivar categoría.
+router.delete('/:id', [
+    validJWT,
+    isAdminRole,
+    check('id', 'Not is valid id').isMongoId(),
+    check('id').custom(categoryExitsById),
+    validFields
+], deleteCategory);
 
 module.exports = router;
