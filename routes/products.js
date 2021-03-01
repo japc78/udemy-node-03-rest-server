@@ -30,7 +30,14 @@ router.post('/', [
 
 
 router.put('/:id', [
-
+    validJWT,
+    check('name', 'The name is required').notEmpty(),
+    check('name').custom(productNameExits),
+    check('category', 'Not is valid id').isMongoId(),
+    check('category').custom(categoryExitsById),
+    check('precio', 'Should be a Number').isNumeric(),
+    check('available', 'Should be true or false').isBoolean(),
+    validFields
 ], updateProduct);
 
 

@@ -58,7 +58,7 @@ const getProductById = async (req = request, res = response) => {
 
 const addProduct = async (req = request, res = response) => {
     try {
-        const { name, Product, precio, description, available } = req.body;
+        const { name, precio, description, available } = req.body;
         // const name = req.body.name.toUpperCase();
 
         const product = new Product( {name, Product, precio, description, available} );
@@ -78,7 +78,38 @@ const addProduct = async (req = request, res = response) => {
 }
 
 
-const updateProduct = (req = request, res = response) => {
+const updateProduct = async (req = request, res = response) => {
+
+    try {
+        const { id } = req.params;
+        const { name, precio, category, description, available } = req.body;
+
+        const data = {
+            name,
+            precio,
+            description,
+            available,
+            category,
+            user: req.user.id
+        }
+
+        const product = await Product.findByIdAndUpdate(id, data, { new: true})
+            .populate({
+                path: 'user',
+                select: 'name role',
+            })
+            .populate({
+                path: 'category',
+                select: 'name'
+            });
+
+        res.status(200).json({
+            product
+        })
+
+    } catch (error) {
+        showError(error, res);
+    }
 
 }
 
