@@ -31,6 +31,8 @@ router.post('/', [
 
 router.put('/:id', [
     validJWT,
+    check('id', 'Not is valid id').isMongoId(),
+    check('id').custom(productExitsById),
     check('name', 'The name is required').notEmpty(),
     check('name').custom(productNameExits),
     check('category', 'Not is valid id').isMongoId(),
