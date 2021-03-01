@@ -12,7 +12,7 @@ const validJWT = async ( req = request, res = response, next) => {
         // jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
 
         const payload = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
-        console.log(payload);
+        // console.log(payload);
 
         const { uid } = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
         req.uid = uid;

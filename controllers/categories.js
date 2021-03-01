@@ -112,7 +112,7 @@ const addCategory = async ( req = request, res = response) => {
     try {
         const data = {
             name,
-            user: req.user._id
+            user: req.header.user._id
         }
 
         const category = new Category(data);

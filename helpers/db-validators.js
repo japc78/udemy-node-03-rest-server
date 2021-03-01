@@ -1,4 +1,4 @@
-const { Role, Category, User } = require('../models');
+const { Role, Category, User, Product } = require('../models');
 
 const isRoleValid = async (role = '') => {
     const roleExists = await Role.findOne({ role });
@@ -40,10 +40,19 @@ const categoryNameExits = async (name = '') => {
     }
 }
 
+const productNameExits = async (name = '') => {
+    const productNameExits = await Product.findOne({ name });
+
+    if (productNameExits) {
+        throw new Error(`The name: ${name} already exits in Database`);
+    }
+}
+
 module.exports = {
     isRoleValid,
     emailExists,
     userExists,
     categoryExitsById,
-    categoryNameExits
+    categoryNameExits,
+    productNameExits
 }

@@ -8,9 +8,10 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
         this.paths = {
-            authPath : '/api/auth',
-            categoriesPath : '/api/categories',
-            userPath : '/api/user',
+            auth : '/api/auth',
+            categories : '/api/categories',
+            user : '/api/user',
+            products : '/api/products',
         }
         this.dbConnection();
         this.middleWares();
@@ -18,9 +19,10 @@ class Server {
     }
 
     routes() {
-        this.app.use(this.paths.authPath, require('../routes/auth'));
-        this.app.use(this.paths.userPath, require('../routes/user'));
-        this.app.use(this.paths.categoriesPath, require('../routes/categories'));
+        this.app.use(this.paths.auth, require('../routes/auth'));
+        this.app.use(this.paths.user, require('../routes/user'));
+        this.app.use(this.paths.categories, require('../routes/categories'));
+        this.app.use(this.paths.products, require('../routes/products'));
     }
 
     async dbConnection() {
