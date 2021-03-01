@@ -83,7 +83,24 @@ const updateProduct = (req = request, res = response) => {
 }
 
 
-const deleteProduct = (req = request, res = response) => {
+const deleteProduct = async (req = request, res = response) => {
+    try {
+        const { id } = req.params;
+
+        const data = {
+            state: false,
+            user: req.user.id
+        }
+
+        const product = await Product.findByIdAndUpdate(id, data, { new: true});
+
+        res.status(200).json({
+            product
+        });
+
+    } catch (error) {
+        showError(error, res);
+    }
 
 }
 

@@ -35,8 +35,11 @@ router.put('/:id', [
 
 
 router.delete('/:id', [
-
-
+    validJWT,
+    check('id', 'Not is valid id').isMongoId(),
+    validFields,
+    check('id').custom(productExitsById),
+    validFields
 ], deleteProduct);
 
 module.exports = router;
