@@ -4,7 +4,7 @@ const { getProducts, addProduct, getProductById, updateProduct, deleteProduct } 
 
 const { validJWT, validFields, shouldBeRole } = require('../middlewares');
 
-const { categoryExitsById, productNameExits } = require('../helpers/db-validators');
+const { categoryExitsById, productNameExits, productExitsById } = require('../helpers/db-validators');
 
 const router = Router();
 
@@ -12,7 +12,10 @@ router.get('/', getProducts);
 
 
 router.get('/:id', [
-
+    check('id', 'Not is valid id').isMongoId(),
+    validFields,
+    check('id').custom(productExitsById),
+    validFields
 ], getProductById);
 
 

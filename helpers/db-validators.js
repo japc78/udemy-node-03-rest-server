@@ -40,6 +40,14 @@ const categoryNameExits = async (name = '') => {
     }
 }
 
+const productExitsById = async (id = '') => {
+    const productExits = await Product.findById(id);
+
+    if (!productExits) {
+        throw new Error(`The id: ${id} is not register in Database`);
+    }
+}
+
 const productNameExits = async (name = '') => {
     const productNameExits = await Product.findOne({ name });
 
@@ -54,5 +62,6 @@ module.exports = {
     userExists,
     categoryExitsById,
     categoryNameExits,
+    productExitsById,
     productNameExits
 }
