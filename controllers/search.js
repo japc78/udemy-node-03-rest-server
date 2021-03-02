@@ -45,6 +45,20 @@ const searchUsers = async ( term = '',  res = response ) => {
             results: (user) ? [user] : []
         });
     }
+
+    // Se crea una expresion regular para familitar las busquedas
+    const regex = new RegExp(term, 'i');
+
+    const users = await User.find({
+        // Varias opciones de coincidencia para el nombre y el email
+        $or: [{ name: regex }, { email: regex }],
+        $and: [{ state: true}]
+    });
+
+    return res.json({
+        total: users.length,
+        results: users
+    });
 }
 
 module.exports = {
