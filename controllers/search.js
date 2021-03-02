@@ -18,15 +18,11 @@ const search = ( req = request, res = response) => {
 
     switch (collection) {
         case 'categories':
-
+            searchCategories( term, res);
         break;
 
         case 'products':
-
-        break;
-
-        case 'roles':
-
+            searchProducts(term, res);
         break;
 
         case 'users':
@@ -39,7 +35,7 @@ const searchUsers = async ( term = '',  res = response ) => {
     const isMongoId = ObjectId.isValid(term);
 
     if (isMongoId) {
-        const user = await User.findById(term);
+        const user = await Category.findById(term);
 
         return res.json({
             results: (user) ? [user] : []
@@ -49,7 +45,7 @@ const searchUsers = async ( term = '',  res = response ) => {
     // Se crea una expresion regular para familitar las busquedas
     const regex = new RegExp(term, 'i');
 
-    const users = await User.find({
+    const users = await Category.find({
         // Varias opciones de coincidencia para el nombre y el email
         $or: [{ name: regex }, { email: regex }],
         $and: [{ state: true}]
@@ -58,6 +54,51 @@ const searchUsers = async ( term = '',  res = response ) => {
     return res.json({
         total: users.length,
         results: users
+    });
+}
+
+const searchProducts = async ( term = '', res = response) => {
+
+    const isMongoId = ObjectId.isValid(term);
+
+    if (isMongoId) {
+        const product = await Product.findById(term).populate('category', 'name');
+
+        return res.json({
+            results: (product) ? [product] : []
+        });
+    }
+
+    // Se crea una expresión regular para facilitar las búsquedas
+    const regex = new RegExp(term, 'i');
+
+    const products = await Product.find({ name: regex, state: true}).populate('category', 'name');
+
+    return res.json({
+        total: products.length,
+        results: products
+    });
+}
+
+const searchCategories = async( term = '', res = response) => {
+    const isMongoId = ObjectId.isValid(term);
+
+    if (isMongoId) {
+        const user = await Category.findById(term);
+
+        return res.json({
+            results: (user) ? [user] : []
+        });
+    }
+
+    // Se crea una expresion regular para familitar las busquedas
+    const regex = new RegExp(term, 'i');
+
+    const categories = await Category.find({ name: regex, state: true });
+
+    return res.json({
+        total: categories.length,
+        results: categories
     });
 }
 
