@@ -33,6 +33,7 @@ const categoryExitsById = async (id = '') => {
 }
 
 const categoryNameExits = async (name = '') => {
+    name = name.toUpperCase();
     const categoryNameExits = await Category.findOne({ name });
 
     if (categoryNameExits) {
@@ -49,6 +50,7 @@ const productExitsById = async (id = '') => {
 }
 
 const productNameExits = async (name = '') => {
+    name = name.toUpperCase();
     const productNameExits = await Product.findOne({ name });
 
     if (productNameExits) {
