@@ -1,5 +1,6 @@
 const { response, request } = require("express");
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const uploadFiles = (req = request, res = response) => {
 
@@ -19,8 +20,8 @@ const uploadFiles = (req = request, res = response) => {
 
     console.log(extension);
 
-
-    const uploadPath = path.join( __dirname, '../uploads/', file.name);
+    const fileNameFinal = uuidv4() + '.' + extension;
+    const uploadPath = path.join( __dirname, '../uploads/', fileNameFinal);
 
     file.mv(uploadPath, (err) => {
         if (err) {
