@@ -9,6 +9,16 @@ const uploadFiles = (req = request, res = response) => {
     }
 
     const { file } = req.files;
+    const fileNameSplit = file.name.split('.');
+    const extension = fileNameSplit[ fileNameSplit.length - 1];
+
+    // Extension validator
+    const validExtension = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+
+    if (!validExtension.includes(extension)) res.status(400).json({ msg: `The extension: .${extension}, is not allowed`})
+
+    console.log(extension);
+
 
     const uploadPath = path.join( __dirname, '../uploads/', file.name);
 
