@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 const { response, request } = require("express");
 const { uploadFile } = require('../helpers');
 
@@ -34,6 +37,16 @@ const updateImage = async (req = request, res = response) => {
                 if (!model) return res.status(400).json({ msg: `Do not exist products with Id: ${id}`});
             break;
         }
+
+        // Borrar image anterior
+        if (model.img) {
+            const pathImage = path.join( __dirname, '../uploads', collection, model.img );
+
+            if (fs.existsSync(pathImage)) {
+                fs.unlinkSync(pathImage);
+            }
+        }
+
 
         model.img = await  uploadFile(req.files, undefined, collection);
         model.save();
