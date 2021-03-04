@@ -58,6 +58,12 @@ const productNameExits = async (name = '') => {
     }
 }
 
+const isAllowCollection = (collection = '', collections = []) => {
+    const isIncluded = collections.includes(collection);
+    if (!isIncluded) throw new Error(`The collection: ${collection} is not allow. Allowed collections: [${collections}]`);
+    return true;
+}
+
 module.exports = {
     isRoleValid,
     emailExists,
@@ -65,5 +71,6 @@ module.exports = {
     categoryExitsById,
     categoryNameExits,
     productExitsById,
-    productNameExits
+    productNameExits,
+    isAllowCollection
 }

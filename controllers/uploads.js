@@ -1,28 +1,51 @@
 const { response, request } = require("express");
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 const { uploadFile } = require('../helpers');
+
+const { User, Product } = require('../models');
 
 
 const uploadFiles = async (req = request, res = response) => {
-
     try {
-        if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
-            res.status(400).json( { msg: 'No files were uploaded'});
-            return;
-        }
-
         const name = await uploadFile(req.files);
-
         res.json({
             name
-        })
-    } catch (error) {
-        console.error(error);
-        res.json({ msg: 'Oops, There has been an error uploading the files, please contact the administrator.'})
+        });
+
+    } catch (msg) {
+        res.status(400).json({ msg })
     }
 };
 
+const updateImage = async (req = request, res = response) => {
+    try {
+
+        const { id, collection } = req.params;
+
+        let model;
+
+        switch (collection) {
+            case 'users':
+                model = await User.findById(id);
+                if (!model) return res.status(400).json({ msg: `Do not exist users with Id: ${id}`});
+                break;
+
+            case 'products':
+                model = await User.findById(id);
+                if (!model) return res.status(400).json({ msg: `Do not exist products with Id: ${id}`});
+            break;
+        }
+
+        model.img = await  uploadFile(req.files, undefined, collection);
+        model.save();
+
+        res.json( model );
+
+    } catch (msg) {
+        res.status(400).json({ msg })
+    }
+}
+
 module.exports = {
   uploadFiles,
+  updateImage
 };
