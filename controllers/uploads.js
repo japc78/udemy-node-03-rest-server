@@ -76,29 +76,35 @@ const updateImageCloudinary = async (req = request, res = response) => {
                 break;
 
             case 'products':
-                model = await User.findById(id);
+                model = await Product.findById(id);
                 if (!model) return res.status(400).json({ msg: `Do not exist products with Id: ${id}`});
             break;
         }
 
+        const pathFile = `node_to_expert/${collection}`;
         // Borrar image anterior
         // console.log(req.files.file);
         if (model.img) {
             const tempArray = model.img.split('/');
             const [ public_id ] = tempArray[ tempArray.length -1].split('.');
-            // console.log(public_id);
-            cloudinary.uploader.destroy(public_id);
+            cloudinary.uploader.destroy(`${pathFile}/${public_id}`);
+        }
+
+        // const resp = await cloudinary.api.sub_folders('node_to_expert');
+        const { folders } = await cloudinary.api.sub_folders('node_to_expert');
+        const ifFoldersExist = folders.some(folder => folder.path === pathFile);
+
+        if (!ifFoldersExist) {
+            await cloudinary.api.create_folder(pathFile);
         }
 
         const { tempFilePath } = req.files.file;
-        // const resp = await cloudinary.uploader.upload(tempFilePath);
-        const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+        // const resp = await cloudinary.uploader.upload(tempFilePath, { folder: pathFile, discard_original_filename: true});
+        const { secure_url } = await cloudinary.uploader.upload(tempFilePath, { folder: pathFile, discard_original_filename: true} );
         model.img = secure_url;
 
         model.save();
-
-        res.json( model );
-
+        res.json(model);
     } catch (msg) {
         res.status(400).json({ msg })
     }
